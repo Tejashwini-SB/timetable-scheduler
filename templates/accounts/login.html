@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Login{% endblock %}
+
+{% block auth_content %}
+<div class="auth-page">
+    <div class="auth-card">
+        <!-- Logo -->
+        <div class="auth-logo">
+            <i class="bi bi-calendar3-week-fill"></i>
+        </div>
+        <h1 class="text-center mb-1" style="font-size:1.5rem;font-weight:800;color:#1a237e;">EduScheduler</h1>
+        <p class="text-center text-muted mb-4" style="font-size:0.85rem;">Automated Class Timetable Scheduler</p>
+
+        <!-- Demo Credentials Banner -->
+        <div class="mb-4 p-3 rounded-3" style="background:#e8eaf6;border-left:4px solid #3949ab;">
+            <p class="mb-1" style="font-size:0.78rem;font-weight:700;color:#1a237e;letter-spacing:0.5px;text-transform:uppercase;">
+                <i class="bi bi-info-circle me-1"></i>Demo Credentials
+            </p>
+            <div style="font-size:0.8rem;color:#3949ab;">
+                <div class="d-flex justify-content-between">
+                    <span><strong>Admin:</strong> admin</span>
+                    <span class="badge" style="background:#1a237e;color:white;font-family:monospace;">admin123</span>
+                </div>
+                <div class="d-flex justify-content-between mt-1">
+                    <span><strong>Faculty:</strong> dr.sharma</span>
+                    <span class="badge" style="background:#1a237e;color:white;font-family:monospace;">faculty123</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Login Form -->
+        <form method="post" novalidate>
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="id_username" class="form-label">Username</label>
+                {{ form.username }}
+                {% if form.username.errors %}
+                <div class="invalid-feedback d-block">{{ form.username.errors.0 }}</div>
+                {% endif %}
+            </div>
+            <div class="mb-3">
+                <label for="id_password" class="form-label">Password</label>
+                <div class="position-relative">
+                    {{ form.password }}
+                    <button type="button" class="btn btn-link position-absolute top-50 end-0 translate-middle-y pe-3 text-muted" style="background:none;border:none;" id="togglePassword">
+                        <i class="bi bi-eye" id="eyeIcon"></i>
+                    </button>
+                </div>
+                {% if form.non_field_errors %}
+                <div class="invalid-feedback d-block mt-1">{{ form.non_field_errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 py-3 mt-1" style="font-size:1rem;">
+                <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
+            </button>
+        </form>
+
+        <!-- Divider -->
+        <div class="d-flex align-items-center gap-2 my-3">
+            <hr class="flex-grow-1 m-0">
+            <span class="text-muted" style="font-size:0.75rem;">OR</span>
+            <hr class="flex-grow-1 m-0">
+        </div>
+
+        <!-- Register Link -->
+        <a href="{% url 'accounts:register' %}" class="btn btn-outline-primary w-100 py-2" style="font-size:0.92rem;">
+            <i class="bi bi-person-plus me-2"></i>Create New Account
+        </a>
+
+        <div class="mt-3 text-center text-muted" style="font-size:0.75rem;">
+            <i class="bi bi-shield-lock me-1"></i>
+            New accounts are created with <strong>Student</strong> role by default.
+            Contact admin to upgrade.
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('togglePassword').addEventListener('click', function () {
+    const pw = document.getElementById('id_password');
+    const icon = document.getElementById('eyeIcon');
+    if (pw.type === 'password') {
+        pw.type = 'text';
+        icon.className = 'bi bi-eye-slash';
+    } else {
+        pw.type = 'password';
+        icon.className = 'bi bi-eye';
+    }
+});
+</script>
+{% endblock %}

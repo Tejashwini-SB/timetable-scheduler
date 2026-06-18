@@ -1,0 +1,3 @@
+{% extends 'base.html' %}
+{% block title %}Delete Timetable{% endblock %}
+{% block content %}<div class="row justify-content-center"><div class="col-lg-5"><div class="card border-danger"><div class="card-body text-center py-4"><i class="bi bi-exclamation-triangle-fill text-danger" style="font-size:3rem;"></i><h5 class="mt-3">Delete Timetable for {{ object.section }}?</h5><p class="text-muted">All {{ object.entries.count }} timetable entries will also be permanently deleted.</p><form method="post" class="d-flex gap-2 justify-content-center">{% csrf_token %}<button type="submit" class="btn btn-danger">Delete</button><a href="{% url 'timetable:timetable_list' %}" class="btn btn-outline-secondary">Cancel</a></form></div></div></div></div>{% endblock %}

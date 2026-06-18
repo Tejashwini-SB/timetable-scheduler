@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}Subjects{% endblock %}
+{% block page_header %}
+<div class="page-header">
+<div><h1 class="page-title"><i class="bi bi-book me-2 text-primary"></i>Subjects</h1></div>
+{% if request.user.is_admin_role or request.user.is_superuser %}<a href="{% url 'subjects:subject_create' %}" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg me-1"></i>Add Subject</a>{% endif %}
+</div>
+{% endblock %}
+{% block content %}
+<div class="card mb-3"><div class="card-body py-3">
+<form method="get" class="row g-2 align-items-end">
+<div class="col-md-4"><div class="search-box"><i class="bi bi-search search-icon"></i><input type="text" name="search" class="form-control" placeholder="Search code or name..." value="{{ search }}"></div></div>
+<div class="col-md-3"><select name="department" class="form-select"><option value="">All Departments</option>{% for dept in departments %}<option value="{{ dept.pk }}" {% if selected_dept == dept.pk|stringformat:"d" %}selected{% endif %}>{{ dept.name }}</option>{% endfor %}</select></div>
+<div class="col-md-2"><select name="type" class="form-select"><option value="">All Types</option>{% for val, label in type_choices %}<option value="{{ val }}" {% if selected_type == val %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></div>
+<div class="col-md-2"><button type="submit" class="btn btn-primary w-100">Filter</button></div>
+<div class="col-md-1"><a href="{% url 'subjects:subject_list' %}" class="btn btn-outline-secondary w-100">Clear</a></div>
+</form>
+</div></div>
+<div class="table-wrapper">
+{% if subjects %}
+<table class="table table-hover">
+<thead><tr><th>Code</th><th>Name</th><th>Department</th><th>Type</th><th>Credits</th><th>Hrs/Wk</th><th>Semester</th><th>Status</th><th class="text-end">Actions</th></tr></thead>
+<tbody>
+{% for s in subjects %}
+<tr>
+<td><span class="badge" style="background:#e8eaf6;color:#1a237e;font-family:monospace;">{{ s.code }}</span></td>
+<td><a href="{% url 'subjects:subject_detail' s.pk %}" class="fw-600 text-decoration-none">{{ s.name }}</a></td>
+<td>{{ s.department.code }}</td>
+<td><span class="badge {% if s.subject_type == 'lab' %}bg-warning-subtle text-warning{% elif s.subject_type == 'theory' %}bg-info-subtle text-info{% else %}bg-secondary-subtle text-secondary{% endif %}">{{ s.get_subject_type_display }}</span></td>
+<td>{{ s.credits }}</td>
+<td>{{ s.hours_per_week }}</td>
+<td>Sem {{ s.semester }}</td>
+<td>{% if s.is_active %}<span class="badge bg-success-subtle text-success">Active</span>{% else %}<span class="badge bg-secondary-subtle text-secondary">Inactive</span>{% endif %}</td>
+<td class="text-end"><div class="d-flex gap-1 justify-content-end">
+{% if request.user.is_admin_role or request.user.is_superuser %}
+<a href="{% url 'subjects:subject_update' s.pk %}" class="btn btn-sm btn-outline-warning btn-icon" title="Edit"><i class="bi bi-pencil"></i></a>
+<a href="{% url 'subjects:subject_delete' s.pk %}" class="btn btn-sm btn-outline-danger btn-icon" title="Delete"><i class="bi bi-trash"></i></a>
+{% endif %}
+</div></td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+{% else %}<div class="empty-state"><div class="empty-icon"><i class="bi bi-book"></i></div><h5>No Subjects Found</h5><a href="{% url 'subjects:subject_create' %}" class="btn btn-primary btn-sm">Add Subject</a></div>{% endif %}
+</div>
+{% endblock %}

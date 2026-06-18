@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}Time Slots{% endblock %}
+{% block page_header %}<div class="page-header"><div><h1 class="page-title"><i class="bi bi-clock me-2 text-primary"></i>Time Slots</h1></div>{% if request.user.is_admin_role or request.user.is_superuser %}<a href="{% url 'timetable:timeslot_create' %}" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg me-1"></i>Add Time Slot</a>{% endif %}</div>{% endblock %}
+{% block content %}
+<div class="row g-3">
+{% for day, slots in slots_by_day.items %}
+{% if slots %}
+<div class="col-md-6 col-xl-4">
+<div class="card">
+<div class="card-header" style="background:linear-gradient(135deg,#1a237e,#3949ab);color:white;"><h6 class="mb-0 fw-700">{{ day }}</h6></div>
+<div class="card-body p-0">
+<table class="table table-sm mb-0">
+<thead><tr><th>P#</th><th>Start</th><th>End</th><th>Type</th><th></th></tr></thead>
+<tbody>
+{% for slot in slots %}
+<tr>
+<td class="fw-600">P{{ slot.period_number }}</td>
+<td>{{ slot.start_time|time:"H:i" }}</td>
+<td>{{ slot.end_time|time:"H:i" }}</td>
+<td>{% if slot.is_break %}<span class="badge bg-warning-subtle text-warning">Break</span>{% else %}<span class="badge bg-primary-subtle text-primary">Class</span>{% endif %}</td>
+<td>{% if request.user.is_admin_role or request.user.is_superuser %}<div class="d-flex gap-1"><a href="{% url 'timetable:timeslot_update' slot.pk %}" class="btn btn-sm btn-icon" style="width:22px;height:22px;font-size:0.65rem;background:#fff3e0;color:#e65100;"><i class="bi bi-pencil"></i></a><a href="{% url 'timetable:timeslot_delete' slot.pk %}" class="btn btn-sm btn-icon" style="width:22px;height:22px;font-size:0.65rem;background:#ffebee;color:#c62828;"><i class="bi bi-trash"></i></a></div>{% endif %}</td>
+</tr>{% endfor %}
+</tbody>
+</table>
+</div>
+</div>
+</div>
+{% endif %}
+{% endfor %}
+{% if not timeslots %}
+<div class="col-12"><div class="empty-state card"><div class="card-body py-5"><div class="empty-icon"><i class="bi bi-clock"></i></div><h5>No Time Slots Defined</h5><p>Add time slots to configure your weekly schedule.</p><a href="{% url 'timetable:timeslot_create' %}" class="btn btn-primary btn-sm">Add Time Slot</a></div></div></div>
+{% endif %}
+</div>{% endblock %}

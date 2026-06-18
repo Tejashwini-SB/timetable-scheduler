@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block title %}{{ subject.name }}{% endblock %}
+{% block page_header %}
+<div class="page-header">
+<div>
+<h1 class="page-title"><i class="bi bi-book me-2 text-primary"></i>{{ subject.name }}</h1>
+<p class="page-subtitle">Code: <strong>{{ subject.code }}</strong> | {{ subject.get_subject_type_display }} | {{ subject.credits }} Credits | Sem {{ subject.semester }}</p>
+</div>
+<div class="d-flex gap-2">
+{% if request.user.is_admin_role or request.user.is_superuser %}<a href="{% url 'subjects:subject_update' subject.pk %}" class="btn btn-outline-warning btn-sm"><i class="bi bi-pencil me-1"></i>Edit</a>{% endif %}
+<a href="{% url 'subjects:subject_list' %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left me-1"></i>Back</a>
+</div>
+</div>
+{% endblock %}
+{% block content %}
+<div class="row g-3">
+<div class="col-md-4">
+<div class="card">
+<div class="card-body">
+<h6 class="fw-700 mb-3">Subject Details</h6>
+<dl style="font-size:0.85rem;">
+<dt>Department</dt><dd>{{ subject.department }}</dd>
+<dt>Type</dt><dd>{{ subject.get_subject_type_display }}</dd>
+<dt>Credits</dt><dd>{{ subject.credits }}</dd>
+<dt>Hours/Week</dt><dd>{{ subject.hours_per_week }}</dd>
+<dt>Semester</dt><dd>{{ subject.semester }}</dd>
+<dt>Status</dt><dd>{% if subject.is_active %}<span class="badge bg-success-subtle text-success">Active</span>{% else %}<span class="badge bg-secondary-subtle text-secondary">Inactive</span>{% endif %}</dd>
+{% if subject.description %}<dt>Description</dt><dd>{{ subject.description }}</dd>{% endif %}
+</dl>
+</div>
+</div>
+</div>
+<div class="col-md-8">
+<div class="card">
+<div class="card-header d-flex justify-content-between"><h6 class="mb-0 fw-700">Faculty Assignments</h6><a href="{% url 'timetable:assignment_create' %}" class="btn btn-sm btn-outline-primary">Add Assignment</a></div>
+<div class="card-body p-0">
+{% if assignments %}
+<table class="table table-sm mb-0">
+<thead><tr><th>Faculty</th><th>Section</th><th>Academic Year</th></tr></thead>
+<tbody>{% for a in assignments %}<tr><td><a href="{% url 'faculty:faculty_detail' a.faculty.pk %}">{{ a.faculty }}</a></td><td>{{ a.section|default:"—" }}</td><td>{{ a.academic_year|default:"—" }}</td></tr>{% endfor %}</tbody>
+</table>
+{% else %}<div class="p-3 text-muted">No faculty assigned to this subject yet.</div>{% endif %}
+</div>
+</div>
+</div>
+</div>
+{% endblock %}

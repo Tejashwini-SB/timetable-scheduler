@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Create Account{% endblock %}
+
+{% block auth_content %}
+<div class="auth-page">
+    <div class="auth-card" style="max-width:480px;">
+        <!-- Logo -->
+        <div class="auth-logo">
+            <i class="bi bi-person-plus-fill"></i>
+        </div>
+        <h1 class="text-center mb-1" style="font-size:1.4rem;font-weight:800;color:#1a237e;">Create Account</h1>
+        <p class="text-center text-muted mb-4" style="font-size:0.84rem;">Join EduScheduler — Timetable Management System</p>
+
+        <!-- Info Banner -->
+        <div class="mb-3 p-3 rounded-3" style="background:#e3f2fd;border-left:4px solid #1565c0;">
+            <p class="mb-0" style="font-size:0.78rem;color:#0d47a1;">
+                <i class="bi bi-info-circle-fill me-1"></i>
+                New accounts are assigned the <strong>Student</strong> role automatically.
+                An Administrator can upgrade your role to <strong>Faculty</strong> or <strong>Admin</strong> after login.
+            </p>
+        </div>
+
+        <!-- Register Form -->
+        <form method="post" novalidate>
+            {% csrf_token %}
+
+            <div class="row g-2 mb-2">
+                <div class="col-6">
+                    <label for="id_first_name" class="form-label">First Name</label>
+                    <input type="text" name="first_name" id="id_first_name" class="form-control"
+                           placeholder="First name" value="{{ form.first_name.value|default:'' }}" required>
+                    {% if form.first_name.errors %}<div class="invalid-feedback d-block">{{ form.first_name.errors.0 }}</div>{% endif %}
+                </div>
+                <div class="col-6">
+                    <label for="id_last_name" class="form-label">Last Name</label>
+                    <input type="text" name="last_name" id="id_last_name" class="form-control"
+                           placeholder="Last name" value="{{ form.last_name.value|default:'' }}" required>
+                    {% if form.last_name.errors %}<div class="invalid-feedback d-block">{{ form.last_name.errors.0 }}</div>{% endif %}
+                </div>
+            </div>
+
+            <div class="mb-2">
+                <label for="id_username" class="form-label">Username</label>
+                <input type="text" name="username" id="id_username" class="form-control"
+                       placeholder="Choose a username" value="{{ form.username.value|default:'' }}" required>
+                {% if form.username.errors %}<div class="invalid-feedback d-block">{{ form.username.errors.0 }}</div>{% endif %}
+            </div>
+
+            <div class="mb-2">
+                <label for="id_email" class="form-label">Email</label>
+                <input type="email" name="email" id="id_email" class="form-control"
+                       placeholder="your@email.com" value="{{ form.email.value|default:'' }}" required>
+                {% if form.email.errors %}<div class="invalid-feedback d-block">{{ form.email.errors.0 }}</div>{% endif %}
+            </div>
+
+            <div class="mb-2">
+                <label for="id_phone" class="form-label">Phone <span class="text-muted">(optional)</span></label>
+                <input type="text" name="phone" id="id_phone" class="form-control"
+                       placeholder="e.g. +91 9876543210" value="{{ form.phone.value|default:'' }}">
+            </div>
+
+            <div class="row g-2 mb-3">
+                <div class="col-6">
+                    <label for="id_password1" class="form-label">Password</label>
+                    <div class="position-relative">
+                        <input type="password" name="password1" id="id_password1" class="form-control"
+                               placeholder="Min 8 characters" required>
+                        <button type="button" class="btn btn-link position-absolute top-50 end-0 translate-middle-y pe-3 text-muted"
+                                style="background:none;border:none;" onclick="togglePw('id_password1','eye1')">
+                            <i class="bi bi-eye" id="eye1"></i>
+                        </button>
+                    </div>
+                    {% if form.password1.errors %}<div class="invalid-feedback d-block">{{ form.password1.errors.0 }}</div>{% endif %}
+                </div>
+                <div class="col-6">
+                    <label for="id_password2" class="form-label">Confirm Password</label>
+                    <div class="position-relative">
+                        <input type="password" name="password2" id="id_password2" class="form-control"
+                               placeholder="Re-enter password" required>
+                        <button type="button" class="btn btn-link position-absolute top-50 end-0 translate-middle-y pe-3 text-muted"
+                                style="background:none;border:none;" onclick="togglePw('id_password2','eye2')">
+                            <i class="bi bi-eye" id="eye2"></i>
+                        </button>
+                    </div>
+                    {% if form.password2.errors %}<div class="invalid-feedback d-block">{{ form.password2.errors.0 }}</div>{% endif %}
+                </div>
+            </div>
+
+            {% if form.non_field_errors %}
+            <div class="alert alert-danger py-2 mb-3" style="font-size:0.83rem;">{{ form.non_field_errors.0 }}</div>
+            {% endif %}
+
+            <button type="submit" class="btn btn-primary w-100 py-3" style="font-size:1rem;">
+                <i class="bi bi-person-check me-2"></i>Register Now
+            </button>
+        </form>
+
+        <!-- Divider -->
+        <div class="d-flex align-items-center gap-2 my-3">
+            <hr class="flex-grow-1 m-0">
+            <span class="text-muted" style="font-size:0.75rem;">Already have an account?</span>
+            <hr class="flex-grow-1 m-0">
+        </div>
+
+        <a href="{% url 'accounts:login' %}" class="btn btn-outline-primary w-100 py-2">
+            <i class="bi bi-box-arrow-in-right me-2"></i>Back to Login
+        </a>
+    </div>
+</div>
+
+<script>
+function togglePw(fieldId, iconId) {
+    const field = document.getElementById(fieldId);
+    const icon = document.getElementById(iconId);
+    if (field.type === 'password') {
+        field.type = 'text';
+        icon.className = 'bi bi-eye-slash';
+    } else {
+        field.type = 'password';
+        icon.className = 'bi bi-eye';
+    }
+}
+</script>
+{% endblock %}

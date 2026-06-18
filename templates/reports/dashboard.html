@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block title %}Reports{% endblock %}
+{% block page_header %}<div class="page-header"><div><h1 class="page-title"><i class="bi bi-file-earmark-bar-graph me-2 text-primary"></i>Reports</h1><p class="page-subtitle">Export timetables, faculty schedules, and utilization reports</p></div></div>{% endblock %}
+{% block content %}
+<div class="row g-3 mb-4">
+<div class="col-md-4">
+<div class="card h-100">
+<div class="card-header" style="background:linear-gradient(135deg,#c62828,#e53935);color:white;"><h6 class="mb-0 fw-700"><i class="bi bi-file-earmark-pdf me-2"></i>Timetable Reports (PDF)</h6></div>
+<div class="card-body p-0">
+{% if timetables %}<table class="table table-sm mb-0">
+<tbody>{% for tt in timetables %}<tr>
+<td><small class="fw-600">{{ tt.section }}</small><br><small class="text-muted">{{ tt.academic_year }}</small></td>
+<td class="text-end"><a href="{% url 'reports:timetable_pdf' tt.pk %}" class="btn btn-sm btn-danger btn-icon" title="PDF"><i class="bi bi-file-pdf"></i></a></td>
+</tr>{% endfor %}</tbody>
+</table>{% else %}<div class="p-3 text-muted text-center">No timetables.</div>{% endif %}
+</div>
+</div>
+</div>
+<div class="col-md-4">
+<div class="card h-100">
+<div class="card-header" style="background:linear-gradient(135deg,#1b5e20,#2e7d32);color:white;"><h6 class="mb-0 fw-700"><i class="bi bi-file-earmark-excel me-2"></i>Timetable Reports (Excel)</h6></div>
+<div class="card-body p-0">
+{% if timetables %}<table class="table table-sm mb-0">
+<tbody>{% for tt in timetables %}<tr>
+<td><small class="fw-600">{{ tt.section }}</small><br><small class="text-muted">{{ tt.academic_year }}</small></td>
+<td class="text-end"><a href="{% url 'reports:timetable_excel' tt.pk %}" class="btn btn-sm btn-success btn-icon" title="Excel"><i class="bi bi-file-excel"></i></a></td>
+</tr>{% endfor %}</tbody>
+</table>{% else %}<div class="p-3 text-muted text-center">No timetables.</div>{% endif %}
+</div>
+</div>
+</div>
+<div class="col-md-4">
+<div class="card h-100">
+<div class="card-header" style="background:linear-gradient(135deg,#004d40,#00695c);color:white;"><h6 class="mb-0 fw-700"><i class="bi bi-person-badge me-2"></i>Faculty Timetable (PDF)</h6></div>
+<div class="card-body p-0">
+{% if faculty_list %}<table class="table table-sm mb-0">
+<tbody>{% for f in faculty_list %}<tr>
+<td><small class="fw-600">{{ f.full_name }}</small><br><small class="text-muted">{{ f.employee_id }}</small></td>
+<td class="text-end"><a href="{% url 'reports:faculty_pdf' f.pk %}" class="btn btn-sm btn-icon" style="background:#e0f2f1;color:#004d40;" title="PDF"><i class="bi bi-file-pdf"></i></a></td>
+</tr>{% endfor %}</tbody>
+</table>{% else %}<div class="p-3 text-muted text-center">No faculty.</div>{% endif %}
+</div>
+</div>
+</div>
+</div>
+<div class="row g-3">
+<div class="col-md-6">
+<div class="card">
+<div class="card-body text-center py-4">
+<i class="bi bi-door-open text-primary" style="font-size:2.5rem;"></i>
+<h6 class="fw-700 mt-2">Classroom Utilization</h6>
+<p class="text-muted mb-3" style="font-size:0.85rem;">View how classrooms are being used across all timetables.</p>
+<a href="{% url 'reports:classroom_utilization' %}" class="btn btn-outline-primary">View Report</a>
+</div>
+</div>
+</div>
+<div class="col-md-6">
+<div class="card">
+<div class="card-body text-center py-4">
+<i class="bi bi-building text-primary" style="font-size:2.5rem;"></i>
+<h6 class="fw-700 mt-2">Department Summary</h6>
+<p class="text-muted mb-3" style="font-size:0.85rem;">Overview of all departments, faculty, and timetables.</p>
+<a href="{% url 'reports:department_report' %}" class="btn btn-outline-primary">View Report</a>
+</div>
+</div>
+</div>
+</div>
+{% endblock %}

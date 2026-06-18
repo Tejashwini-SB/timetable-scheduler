@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+
+{% block title %}Timetables{% endblock %}
+
+{% block page_header %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title"><i class="bi bi-calendar-week me-2 text-primary"></i>Timetables</h1>
+        <p class="page-subtitle">Manage all class timetables</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{% url 'timetable:auto_schedule' %}" class="btn btn-success btn-sm">
+            <i class="bi bi-magic me-1"></i>Auto-Schedule
+        </a>
+        <a href="{% url 'timetable:timetable_create' %}" class="btn btn-primary btn-sm">
+            <i class="bi bi-plus-lg me-1"></i>Create Timetable
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<!-- Filters -->
+<div class="card mb-3">
+    <div class="card-body py-3">
+        <form method="get" class="row g-2 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label">Search</label>
+                <div class="search-box">
+                    <i class="bi bi-search search-icon"></i>
+                    <input type="text" name="search" class="form-control" placeholder="Search..." value="{{ search }}">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Department</label>
+                <select name="department" class="form-select">
+                    <option value="">All Departments</option>
+                    {% for dept in departments %}
+                    <option value="{{ dept.pk }}" {% if request.GET.department == dept.pk|stringformat:"d" %}selected{% endif %}>{{ dept.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Academic Year</label>
+                <select name="academic_year" class="form-select">
+                    <option value="">All Years</option>
+                    {% for ay in academic_years %}
+                    <option value="{{ ay.pk }}" {% if request.GET.academic_year == ay.pk|stringformat:"d" %}selected{% endif %}>{{ ay.year_label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">Filter</button>
+            </div>
+            <div class="col-md-1">
+                <a href="{% url 'timetable:timetable_list' %}" class="btn btn-outline-secondary w-100">Clear</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="table-wrapper">
+    {% if timetables %}
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Section</th>
+                <th>Department</th>
+                <th>Year of Study</th>
+                <th>Academic Year</th>
+                <th>Status</th>
+                <th>Created</th>
+                <th class="text-end">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for tt in timetables %}
+            <tr>
+                <td><span class="text-muted">{{ forloop.counter }}</span></td>
+                <td>
+                    <a href="{% url 'timetable:timetable_detail' tt.pk %}" class="fw-600 text-decoration-none text-primary">
+                        Sec {{ tt.section.name }}
+                    </a>
+                </td>
+                <td><span class="badge" style="background:#e8eaf6;color:#1a237e;">{{ tt.section.department.code }}</span></td>
+                <td>Year {{ tt.section.year_of_study }}</td>
+                <td>{{ tt.academic_year.year_label }}</td>
+                <td>
+                    {% if tt.is_active %}
+                    <span class="badge bg-success-subtle text-success">Active</span>
+                    {% else %}
+                    <span class="badge bg-secondary-subtle text-secondary">Inactive</span>
+                    {% endif %}
+                </td>
+                <td class="text-muted" style="font-size:0.8rem;">{{ tt.created_at|date:"M d, Y" }}</td>
+                <td class="text-end">
+                    <div class="d-flex gap-1 justify-content-end">
+                        <a href="{% url 'timetable:timetable_detail' tt.pk %}" class="btn btn-sm btn-outline-primary btn-icon" title="View"><i class="bi bi-eye"></i></a>
+                        <a href="{% url 'reports:timetable_pdf' tt.pk %}" class="btn btn-sm btn-icon" style="background:#ffebee;color:#c62828;" title="PDF"><i class="bi bi-file-pdf"></i></a>
+                        <a href="{% url 'reports:timetable_excel' tt.pk %}" class="btn btn-sm btn-icon" style="background:#e8f5e9;color:#2e7d32;" title="Excel"><i class="bi bi-file-excel"></i></a>
+                        <a href="{% url 'timetable:timetable_update' tt.pk %}" class="btn btn-sm btn-outline-warning btn-icon" title="Edit"><i class="bi bi-pencil"></i></a>
+                        <a href="{% url 'timetable:timetable_delete' tt.pk %}" class="btn btn-sm btn-outline-danger btn-icon" title="Delete"><i class="bi bi-trash"></i></a>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <!-- Pagination -->
+    {% if is_paginated %}
+    <div class="p-3 border-top d-flex justify-content-between align-items-center">
+        <span class="text-muted" style="font-size:0.82rem;">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+        <nav>
+            <ul class="pagination pagination-sm mb-0">
+                {% if page_obj.has_previous %}<li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">«</a></li>{% endif %}
+                {% for num in page_obj.paginator.page_range %}
+                <li class="page-item {% if page_obj.number == num %}active{% endif %}"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                {% endfor %}
+                {% if page_obj.has_next %}<li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">»</a></li>{% endif %}
+            </ul>
+        </nav>
+    </div>
+    {% endif %}
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon"><i class="bi bi-calendar-x"></i></div>
+        <h5>No Timetables Found</h5>
+        <p>Create a new timetable or use the auto-scheduler to get started.</p>
+        <a href="{% url 'timetable:timetable_create' %}" class="btn btn-primary">
+            <i class="bi bi-plus-lg me-1"></i>Create Timetable
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

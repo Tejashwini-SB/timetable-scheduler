@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Department Report{% endblock %}
+{% block page_header %}<div class="page-header"><div><h1 class="page-title"><i class="bi bi-building me-2 text-primary"></i>Department Report</h1></div><a href="{% url 'reports:dashboard' %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left me-1"></i>Back</a></div>{% endblock %}
+{% block content %}
+{% for dept in departments %}
+<div class="card mb-3">
+<div class="card-header d-flex justify-content-between align-items-center" style="background:var(--primary-lighter);">
+<h6 class="mb-0 fw-700 text-primary">{{ dept.name }} ({{ dept.code }})</h6>
+<div class="d-flex gap-2">
+<span class="badge" style="background:#e8eaf6;color:#1a237e;"><i class="bi bi-person-badge me-1"></i>{{ dept.faculty_members.count }} Faculty</span>
+<span class="badge" style="background:#e0f2f1;color:#004d40;"><i class="bi bi-book me-1"></i>{{ dept.subjects.count }} Subjects</span>
+</div>
+</div>
+<div class="card-body">
+<div class="row g-2" style="font-size:0.82rem;">
+<div class="col-md-4"><strong>HoD:</strong> {{ dept.head_of_department.get_full_name|default:"—" }}</div>
+<div class="col-md-4"><strong>Sections:</strong> {{ dept.sections.count }}</div>
+<div class="col-md-4"><strong>Active Timetables:</strong>
+{% with count=0 %}
+{% for sec in dept.sections.all %}{% for tt in sec.timetables.all %}{% if tt.is_active %}(active){% endif %}{% endfor %}{% endfor %}
+{{ dept.sections.count }}
+{% endwith %}
+</div>
+</div>
+</div>
+</div>
+{% empty %}
+<div class="empty-state card"><div class="card-body py-5"><div class="empty-icon"><i class="bi bi-building"></i></div><h5>No Departments</h5></div></div>
+{% endfor %}
+{% endblock %}

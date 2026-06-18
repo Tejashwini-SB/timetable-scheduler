@@ -1,0 +1,112 @@
+{% load static %}
+<nav class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+        <div class="brand-icon">
+            <i class="bi bi-calendar3-week-fill"></i>
+        </div>
+        <div class="brand-text">
+            <span class="brand-name">EduScheduler</span>
+            <span class="brand-sub">Timetable System</span>
+        </div>
+        <button class="sidebar-toggle-btn d-lg-none" id="sidebarToggle">
+            <i class="bi bi-x-lg"></i>
+        </button>
+    </div>
+
+    <div class="sidebar-user">
+        <div class="user-avatar">
+            {% if user.profile_picture %}
+                <img src="{{ user.profile_picture.url }}" alt="{{ user.username }}">
+            {% else %}
+                <span>{{ user.first_name|first|upper }}{{ user.last_name|first|upper }}</span>
+            {% endif %}
+        </div>
+        <div class="user-info">
+            <div class="user-name">{{ user.get_full_name|default:user.username }}</div>
+            <div class="user-role badge bg-primary-subtle text-primary">{{ user.get_role_display }}</div>
+        </div>
+    </div>
+
+    <nav class="sidebar-nav">
+        <div class="nav-section">
+            <span class="nav-section-label">Main</span>
+            <a href="{% url 'dashboard:index' %}" class="nav-link {% if request.resolver_match.namespace == 'dashboard' %}active{% endif %}">
+                <i class="bi bi-speedometer2"></i>
+                <span>Dashboard</span>
+            </a>
+        </div>
+
+        <div class="nav-section">
+            <span class="nav-section-label">Management</span>
+            <a href="{% url 'departments:department_list' %}" class="nav-link {% if request.resolver_match.namespace == 'departments' %}active{% endif %}">
+                <i class="bi bi-building"></i>
+                <span>Departments</span>
+            </a>
+            <a href="{% url 'faculty:faculty_list' %}" class="nav-link {% if request.resolver_match.namespace == 'faculty' %}active{% endif %}">
+                <i class="bi bi-person-badge"></i>
+                <span>Faculty</span>
+            </a>
+            <a href="{% url 'subjects:subject_list' %}" class="nav-link {% if request.resolver_match.namespace == 'subjects' %}active{% endif %}">
+                <i class="bi bi-book"></i>
+                <span>Subjects</span>
+            </a>
+            <a href="{% url 'classrooms:classroom_list' %}" class="nav-link {% if request.resolver_match.namespace == 'classrooms' %}active{% endif %}">
+                <i class="bi bi-door-open"></i>
+                <span>Classrooms</span>
+            </a>
+        </div>
+
+        <div class="nav-section">
+            <span class="nav-section-label">Scheduling</span>
+            <a href="{% url 'timetable:timetable_list' %}" class="nav-link {% if request.resolver_match.namespace == 'timetable' and 'timeslot' not in request.path and 'assignment' not in request.path and 'auto' not in request.path %}active{% endif %}">
+                <i class="bi bi-calendar-week"></i>
+                <span>Timetables</span>
+            </a>
+            <a href="{% url 'timetable:auto_schedule' %}" class="nav-link {% if 'auto-schedule' in request.path %}active{% endif %}">
+                <i class="bi bi-magic"></i>
+                <span>Auto-Schedule</span>
+            </a>
+            <a href="{% url 'timetable:assignment_list' %}" class="nav-link {% if 'assignments' in request.path %}active{% endif %}">
+                <i class="bi bi-person-check"></i>
+                <span>Assignments</span>
+            </a>
+            <a href="{% url 'timetable:timeslot_list' %}" class="nav-link {% if 'timeslot' in request.path %}active{% endif %}">
+                <i class="bi bi-clock"></i>
+                <span>Time Slots</span>
+            </a>
+        </div>
+
+        <div class="nav-section">
+            <span class="nav-section-label">Reports</span>
+            <a href="{% url 'reports:dashboard' %}" class="nav-link {% if request.resolver_match.namespace == 'reports' %}active{% endif %}">
+                <i class="bi bi-file-earmark-bar-graph"></i>
+                <span>Reports</span>
+            </a>
+        </div>
+
+        {% if user.is_admin_role or user.is_superuser %}
+        <div class="nav-section">
+            <span class="nav-section-label">Admin</span>
+            <a href="{% url 'accounts:user_list' %}" class="nav-link {% if 'users' in request.path and request.resolver_match.namespace == 'accounts' %}active{% endif %}">
+                <i class="bi bi-people"></i>
+                <span>Users</span>
+            </a>
+            <a href="{% url 'admin:index' %}" class="nav-link" target="_blank">
+                <i class="bi bi-shield-lock"></i>
+                <span>Admin Panel</span>
+            </a>
+        </div>
+        {% endif %}
+    </nav>
+
+    <div class="sidebar-footer">
+        <a href="{% url 'accounts:profile' %}" class="nav-link">
+            <i class="bi bi-person-circle"></i>
+            <span>Profile</span>
+        </a>
+        <a href="{% url 'accounts:logout' %}" class="nav-link text-danger">
+            <i class="bi bi-box-arrow-right"></i>
+            <span>Logout</span>
+        </a>
+    </div>
+</nav>

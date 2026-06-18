@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% block title %}{{ faculty.full_name }}{% endblock %}
+{% block page_header %}
+<div class="page-header">
+<div>
+<h1 class="page-title"><i class="bi bi-person-badge me-2 text-primary"></i>{{ faculty.full_name }}</h1>
+<p class="page-subtitle">{{ faculty.get_designation_display }} — {{ faculty.department }}</p>
+</div>
+<div class="d-flex gap-2">
+<a href="{% url 'reports:faculty_pdf' faculty.pk %}" class="btn btn-danger btn-sm"><i class="bi bi-file-pdf me-1"></i>PDF</a>
+{% if request.user.is_admin_role or request.user.is_superuser %}
+<a href="{% url 'faculty:faculty_update' faculty.pk %}" class="btn btn-outline-warning btn-sm"><i class="bi bi-pencil me-1"></i>Edit</a>
+{% endif %}
+<a href="{% url 'faculty:faculty_list' %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left me-1"></i>Back</a>
+</div>
+</div>
+{% endblock %}
+{% block content %}
+<div class="row g-3">
+<div class="col-md-4">
+<div class="card">
+<div class="card-body text-center">
+<div class="user-avatar mx-auto mb-3" style="width:80px;height:80px;font-size:1.5rem;">{{ faculty.user.first_name|first }}{{ faculty.user.last_name|first }}</div>
+<h5 class="fw-700">{{ faculty.full_name }}</h5>
+<p class="text-muted mb-2">{{ faculty.get_designation_display }}</p>
+<span class="badge" style="background:#e8eaf6;color:#1a237e;">{{ faculty.employee_id }}</span>
+<hr>
+<dl class="text-start mb-0" style="font-size:0.85rem;">
+<dt>Email</dt><dd>{{ faculty.email }}</dd>
+<dt>Department</dt><dd>{{ faculty.department|default:"—" }}</dd>
+<dt>Specialization</dt><dd>{{ faculty.specialization|default:"—" }}</dd>
+<dt>Qualification</dt><dd>{{ faculty.qualification|default:"—" }}</dd>
+<dt>Experience</dt><dd>{{ faculty.experience_years }} year(s)</dd>
+<dt>Max Hours/Week</dt><dd>{{ faculty.max_hours_per_week }} hrs</dd>
+<dt>Status</dt><dd>{% if faculty.is_active %}<span class="badge bg-success-subtle text-success">Active</span>{% else %}<span class="badge bg-danger-subtle text-danger">Inactive</span>{% endif %}</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="col-md-8">
+<div class="card mb-3">
+<div class="card-header"><h6 class="mb-0 fw-700"><i class="bi bi-book me-2"></i>Subject Assignments</h6></div>
+<div class="card-body p-0">
+{% if assignments %}
+<table class="table table-sm mb-0">
+<thead><tr><th>Subject</th><th>Section</th><th>Academic Year</th></tr></thead>
+<tbody>
+{% for a in assignments %}<tr><td>{{ a.subject }}</td><td>{{ a.section|default:"—" }}</td><td>{{ a.academic_year|default:"—" }}</td></tr>{% endfor %}
+</tbody>
+</table>
+{% else %}<div class="p-3 text-muted">No assignments yet.</div>{% endif %}
+</div>
+</div>
+<div class="card">
+<div class="card-header"><h6 class="mb-0 fw-700"><i class="bi bi-calendar-week me-2"></i>Timetable Entries (Recent)</h6></div>
+<div class="card-body p-0">
+{% if timetable_entries %}
+<table class="table table-sm mb-0">
+<thead><tr><th>Day</th><th>Period</th><th>Subject</th><th>Section</th><th>Room</th></tr></thead>
+<tbody>
+{% for e in timetable_entries %}<tr>
+<td>{{ e.time_slot.day }}</td>
+<td>P{{ e.time_slot.period_number }}</td>
+<td>{{ e.subject.code|default:"—" }}</td>
+<td>{{ e.timetable.section }}</td>
+<td>{{ e.classroom.room_number|default:"—" }}</td>
+</tr>{% endfor %}
+</tbody>
+</table>
+{% else %}<div class="p-3 text-muted">No timetable entries assigned.</div>{% endif %}
+</div>
+</div>
+</div>
+</div>
+{% endblock %}

@@ -1,0 +1,216 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block page_header %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">
+            <i class="bi bi-speedometer2 me-2 text-primary"></i>Dashboard
+        </h1>
+        <p class="page-subtitle">Welcome back, {{ request.user.get_full_name|default:request.user.username }}! Here's your overview.</p>
+    </div>
+    {% if request.user.is_admin_role or request.user.is_superuser %}
+    <div class="d-flex gap-2">
+        <a href="{% url 'timetable:auto_schedule' %}" class="btn btn-primary">
+            <i class="bi bi-magic me-1"></i>Auto-Schedule
+        </a>
+        <a href="{% url 'timetable:timetable_create' %}" class="btn btn-outline-primary">
+            <i class="bi bi-plus-lg me-1"></i>New Timetable
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block content %}
+<!-- Statistics Row -->
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card" style="color:#1a237e">
+            <div class="stat-icon" style="background:#e8eaf6;color:#1a237e;">
+                <i class="bi bi-person-badge"></i>
+            </div>
+            <div class="stat-value" style="color:#1a237e;">{{ total_faculty }}</div>
+            <div class="stat-label">Total Faculty</div>
+            <a href="{% url 'faculty:faculty_list' %}" class="stretched-link"></a>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card" style="color:#004d40">
+            <div class="stat-icon" style="background:#e0f2f1;color:#004d40;">
+                <i class="bi bi-book"></i>
+            </div>
+            <div class="stat-value" style="color:#004d40;">{{ total_subjects }}</div>
+            <div class="stat-label">Total Subjects</div>
+            <a href="{% url 'subjects:subject_list' %}" class="stretched-link"></a>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card" style="color:#e65100">
+            <div class="stat-icon" style="background:#fff3e0;color:#e65100;">
+                <i class="bi bi-door-open"></i>
+            </div>
+            <div class="stat-value" style="color:#e65100;">{{ total_classrooms }}</div>
+            <div class="stat-label">Classrooms</div>
+            <a href="{% url 'classrooms:classroom_list' %}" class="stretched-link"></a>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card" style="color:#4a148c">
+            <div class="stat-icon" style="background:#f3e5f5;color:#4a148c;">
+                <i class="bi bi-calendar-week"></i>
+            </div>
+            <div class="stat-value" style="color:#4a148c;">{{ total_timetables }}</div>
+            <div class="stat-label">Active Timetables</div>
+            <a href="{% url 'timetable:timetable_list' %}" class="stretched-link"></a>
+        </div>
+    </div>
+</div>
+
+<!-- Second row -->
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card" style="color:#1b5e20">
+            <div class="stat-icon" style="background:#e8f5e9;color:#1b5e20;">
+                <i class="bi bi-building"></i>
+            </div>
+            <div class="stat-value" style="color:#1b5e20;">{{ total_departments }}</div>
+            <div class="stat-label">Departments</div>
+            <a href="{% url 'departments:department_list' %}" class="stretched-link"></a>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card" style="color:#0d47a1">
+            <div class="stat-icon" style="background:#e3f2fd;color:#0d47a1;">
+                <i class="bi bi-diagram-3"></i>
+            </div>
+            <div class="stat-value" style="color:#0d47a1;">{{ total_sections }}</div>
+            <div class="stat-label">Sections</div>
+            <a href="{% url 'departments:section_list' %}" class="stretched-link"></a>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card" style="color:#880e4f">
+            <div class="stat-icon" style="background:#fce4ec;color:#880e4f;">
+                <i class="bi bi-people"></i>
+            </div>
+            <div class="stat-value" style="color:#880e4f;">{{ total_users }}</div>
+            <div class="stat-label">System Users</div>
+            <a href="{% url 'accounts:user_list' %}" class="stretched-link"></a>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card" style="color:#37474f">
+            <div class="stat-icon" style="background:#eceff1;color:#37474f;">
+                <i class="bi bi-clock"></i>
+            </div>
+            <div class="stat-value" style="color:#37474f;">{{ total_timeslots }}</div>
+            <div class="stat-label">Time Slots</div>
+            <a href="{% url 'timetable:timeslot_list' %}" class="stretched-link"></a>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <!-- Recent Timetables -->
+    <div class="col-lg-7">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h6 class="mb-0 fw-700"><i class="bi bi-calendar-week me-2 text-primary"></i>Recent Timetables</h6>
+                <a href="{% url 'timetable:timetable_list' %}" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+            <div class="card-body p-0">
+                {% if recent_timetables %}
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Section</th>
+                                <th>Department</th>
+                                <th>Academic Year</th>
+                                <th>Status</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for tt in recent_timetables %}
+                            <tr>
+                                <td><span class="fw-600">{{ tt.section.name }}</span> — Year {{ tt.section.year_of_study }}</td>
+                                <td><span class="badge" style="background:#e8eaf6;color:#1a237e;">{{ tt.section.department.code }}</span></td>
+                                <td>{{ tt.academic_year.year_label }}</td>
+                                <td>
+                                    {% if tt.is_active %}
+                                    <span class="badge bg-success-subtle text-success">Active</span>
+                                    {% else %}
+                                    <span class="badge bg-secondary-subtle text-secondary">Inactive</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{% url 'timetable:timetable_detail' tt.pk %}" class="btn btn-sm btn-outline-primary btn-icon">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="empty-state py-4">
+                    <div class="empty-icon"><i class="bi bi-calendar-x"></i></div>
+                    <h5>No timetables yet</h5>
+                    <p class="text-muted">Start by creating a timetable or running the auto-scheduler.</p>
+                    <a href="{% url 'timetable:auto_schedule' %}" class="btn btn-primary btn-sm">
+                        <i class="bi bi-magic me-1"></i>Auto-Schedule
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="col-lg-5">
+        <div class="card h-100">
+            <div class="card-header">
+                <h6 class="mb-0 fw-700"><i class="bi bi-lightning me-2 text-warning"></i>Quick Actions</h6>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{% url 'timetable:auto_schedule' %}" class="btn btn-primary">
+                        <i class="bi bi-magic me-2"></i>Auto-Generate Timetable
+                    </a>
+                    <a href="{% url 'timetable:assignment_create' %}" class="btn btn-outline-primary">
+                        <i class="bi bi-person-check me-2"></i>Assign Subject to Faculty
+                    </a>
+                    <a href="{% url 'faculty:faculty_create' %}" class="btn btn-outline-success">
+                        <i class="bi bi-person-plus me-2"></i>Add Faculty Member
+                    </a>
+                    <a href="{% url 'subjects:subject_create' %}" class="btn btn-outline-info">
+                        <i class="bi bi-book me-2"></i>Add Subject
+                    </a>
+                    <a href="{% url 'classrooms:classroom_create' %}" class="btn btn-outline-warning">
+                        <i class="bi bi-door-open me-2"></i>Add Classroom
+                    </a>
+                    <a href="{% url 'reports:dashboard' %}" class="btn btn-outline-secondary">
+                        <i class="bi bi-file-earmark-bar-graph me-2"></i>View Reports
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if active_academic_year %}
+<div class="mt-3">
+    <div class="alert alert-info border-0 d-flex align-items-center" style="background:#e3f2fd;color:#0d47a1;">
+        <i class="bi bi-calendar-check-fill me-3 fs-5"></i>
+        <div>
+            <strong>Current Academic Year:</strong> {{ active_academic_year.year_label }}
+            ({{ active_academic_year.start_date|date:"M d" }} – {{ active_academic_year.end_date|date:"M d, Y" }})
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}Subject-Faculty Assignments{% endblock %}
+{% block page_header %}<div class="page-header"><div><h1 class="page-title"><i class="bi bi-person-check me-2 text-primary"></i>Subject-Faculty Assignments</h1></div><a href="{% url 'timetable:assignment_create' %}" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg me-1"></i>New Assignment</a></div>{% endblock %}
+{% block content %}
+<div class="table-wrapper">
+{% if assignments %}
+<table class="table table-hover"><thead><tr><th>Faculty</th><th>Subject</th><th>Section</th><th>Academic Year</th><th>Assigned</th><th class="text-end">Actions</th></tr></thead><tbody>
+{% for a in assignments %}<tr>
+<td class="fw-600">{{ a.faculty }}</td>
+<td><span class="badge" style="background:#e8eaf6;color:#1a237e;">{{ a.subject.code }}</span> {{ a.subject.name }}</td>
+<td>{{ a.section|default:"—" }}</td>
+<td>{{ a.academic_year|default:"—" }}</td>
+<td class="text-muted" style="font-size:0.8rem;">{{ a.assigned_at|date:"M d, Y" }}</td>
+<td class="text-end"><a href="{% url 'timetable:assignment_delete' a.pk %}" class="btn btn-sm btn-outline-danger btn-icon" title="Remove"><i class="bi bi-trash"></i></a></td>
+</tr>{% endfor %}
+</tbody></table>
+{% else %}<div class="empty-state"><div class="empty-icon"><i class="bi bi-person-check"></i></div><h5>No Assignments</h5><p>Assign subjects to faculty members before running the auto-scheduler.</p><a href="{% url 'timetable:assignment_create' %}" class="btn btn-primary btn-sm">Create Assignment</a></div>{% endif %}
+</div>{% endblock %}

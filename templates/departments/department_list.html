@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}Departments{% endblock %}
+{% block page_header %}
+<div class="page-header">
+<div><h1 class="page-title"><i class="bi bi-building me-2 text-primary"></i>Departments</h1></div>
+{% if request.user.is_admin_role or request.user.is_superuser %}<a href="{% url 'departments:department_create' %}" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg me-1"></i>Add Department</a>{% endif %}
+</div>
+{% endblock %}
+{% block content %}
+<div class="card mb-3"><div class="card-body py-3">
+<form method="get" class="row g-2 align-items-end">
+<div class="col-md-5"><div class="search-box"><i class="bi bi-search search-icon"></i><input type="text" name="search" class="form-control" placeholder="Search name or code..." value="{{ search }}"></div></div>
+<div class="col-md-2"><button type="submit" class="btn btn-primary w-100">Search</button></div>
+<div class="col-md-1"><a href="{% url 'departments:department_list' %}" class="btn btn-outline-secondary w-100">Clear</a></div>
+</form>
+</div></div>
+<div class="row g-3">
+{% if departments %}
+{% for dept in departments %}
+<div class="col-md-6 col-lg-4">
+<div class="card h-100">
+<div class="card-body">
+<div class="d-flex justify-content-between align-items-center mb-2">
+<h5 class="fw-700 mb-0"><a href="{% url 'departments:department_detail' dept.pk %}" class="text-decoration-none text-primary">{{ dept.name }}</a></h5>
+<span class="badge" style="background:#e8eaf6;color:#1a237e;font-size:0.85rem;">{{ dept.code }}</span>
+</div>
+{% if dept.head_of_department %}<p class="text-muted mb-2" style="font-size:0.82rem;"><i class="bi bi-person-fill me-1"></i>HoD: {{ dept.head_of_department.get_full_name }}</p>{% endif %}
+{% if dept.description %}<p class="text-muted mb-3" style="font-size:0.8rem;">{{ dept.description|truncatechars:80 }}</p>{% endif %}
+{% if request.user.is_admin_role or request.user.is_superuser %}
+<div class="d-flex gap-1">
+<a href="{% url 'departments:department_detail' dept.pk %}" class="btn btn-sm btn-outline-primary btn-icon flex-grow-1" title="View"><i class="bi bi-eye"></i></a>
+<a href="{% url 'departments:department_update' dept.pk %}" class="btn btn-sm btn-outline-warning btn-icon flex-grow-1" title="Edit"><i class="bi bi-pencil"></i></a>
+<a href="{% url 'departments:department_delete' dept.pk %}" class="btn btn-sm btn-outline-danger btn-icon flex-grow-1" title="Delete"><i class="bi bi-trash"></i></a>
+</div>
+{% endif %}
+</div>
+</div>
+</div>
+{% endfor %}
+{% else %}
+<div class="col-12"><div class="empty-state card"><div class="card-body py-5"><div class="empty-icon"><i class="bi bi-building"></i></div><h5>No Departments Found</h5><a href="{% url 'departments:department_create' %}" class="btn btn-primary btn-sm">Add Department</a></div></div></div>
+{% endif %}
+</div>
+{% endblock %}

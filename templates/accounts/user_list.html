@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Users{% endblock %}
+{% block page_header %}<div class="page-header"><div><h1 class="page-title"><i class="bi bi-people me-2 text-primary"></i>Users</h1></div><a href="{% url 'accounts:user_create' %}" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg me-1"></i>Add User</a></div>{% endblock %}
+{% block content %}
+<div class="card mb-3"><div class="card-body py-3">
+<form method="get" class="row g-2 align-items-end">
+<div class="col-md-5"><div class="search-box"><i class="bi bi-search search-icon"></i><input type="text" name="search" class="form-control" placeholder="Search username, name, email..." value="{{ search }}"></div></div>
+<div class="col-md-3"><select name="role" class="form-select"><option value="">All Roles</option>{% for val, label in role_choices %}<option value="{{ val }}" {% if selected_role == val %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></div>
+<div class="col-md-2"><button type="submit" class="btn btn-primary w-100">Filter</button></div>
+<div class="col-md-1"><a href="{% url 'accounts:user_list' %}" class="btn btn-outline-secondary w-100">Clear</a></div>
+</form>
+</div></div>
+<div class="table-wrapper">
+{% if users %}
+<table class="table table-hover"><thead><tr><th>Username</th><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Joined</th><th class="text-end">Actions</th></tr></thead><tbody>
+{% for u in users %}<tr>
+<td class="fw-600">{{ u.username }}</td>
+<td>{{ u.get_full_name|default:"—" }}</td>
+<td style="font-size:0.82rem;">{{ u.email|default:"—" }}</td>
+<td><span class="badge {% if u.role == 'admin' %}bg-danger-subtle text-danger{% elif u.role == 'faculty' %}bg-primary-subtle text-primary{% else %}bg-secondary-subtle text-secondary{% endif %}">{{ u.get_role_display }}</span></td>
+<td>{% if u.is_active %}<span class="badge bg-success-subtle text-success">Active</span>{% else %}<span class="badge bg-secondary-subtle text-secondary">Inactive</span>{% endif %}</td>
+<td class="text-muted" style="font-size:0.8rem;">{{ u.date_joined|date:"M d, Y" }}</td>
+<td class="text-end"><div class="d-flex gap-1 justify-content-end"><a href="{% url 'accounts:user_update' u.pk %}" class="btn btn-sm btn-outline-warning btn-icon" title="Edit"><i class="bi bi-pencil"></i></a><a href="{% url 'accounts:user_delete' u.pk %}" class="btn btn-sm btn-outline-danger btn-icon" title="Delete"><i class="bi bi-trash"></i></a></div></td>
+</tr>{% endfor %}
+</tbody></table>
+{% else %}<div class="empty-state"><div class="empty-icon"><i class="bi bi-people"></i></div><h5>No Users Found</h5></div>{% endif %}
+</div>{% endblock %}

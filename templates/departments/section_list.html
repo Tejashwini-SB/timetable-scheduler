@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Sections{% endblock %}
+{% block page_header %}<div class="page-header"><div><h1 class="page-title"><i class="bi bi-diagram-3 me-2 text-primary"></i>Sections</h1></div>{% if request.user.is_admin_role or request.user.is_superuser %}<a href="{% url 'departments:section_create' %}" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg me-1"></i>Add Section</a>{% endif %}</div>{% endblock %}
+{% block content %}
+<div class="card mb-3"><div class="card-body py-3">
+<form method="get" class="row g-2 align-items-end">
+<div class="col-md-4"><select name="department" class="form-select"><option value="">All Departments</option>{% for d in departments %}<option value="{{ d.pk }}" {% if request.GET.department == d.pk|stringformat:"d" %}selected{% endif %}>{{ d.name }}</option>{% endfor %}</select></div>
+<div class="col-md-3"><select name="academic_year" class="form-select"><option value="">All Academic Years</option>{% for ay in academic_years %}<option value="{{ ay.pk }}" {% if request.GET.academic_year == ay.pk|stringformat:"d" %}selected{% endif %}>{{ ay.year_label }}</option>{% endfor %}</select></div>
+<div class="col-md-2"><button type="submit" class="btn btn-primary w-100">Filter</button></div>
+<div class="col-md-1"><a href="{% url 'departments:section_list' %}" class="btn btn-outline-secondary w-100">Clear</a></div>
+</form>
+</div></div>
+<div class="table-wrapper">
+{% if sections %}<table class="table table-hover"><thead><tr><th>Section</th><th>Department</th><th>Year</th><th>Academic Year</th><th>Capacity</th><th class="text-end">Actions</th></tr></thead><tbody>
+{% for sec in sections %}<tr>
+<td class="fw-600">Sec {{ sec.name }}</td>
+<td>{{ sec.department.code }}</td>
+<td>Year {{ sec.year_of_study }}</td>
+<td>{{ sec.academic_year }}</td>
+<td>{{ sec.max_students }}</td>
+<td class="text-end"><div class="d-flex gap-1 justify-content-end">{% if request.user.is_admin_role or request.user.is_superuser %}<a href="{% url 'departments:section_update' sec.pk %}" class="btn btn-sm btn-outline-warning btn-icon"><i class="bi bi-pencil"></i></a><a href="{% url 'departments:section_delete' sec.pk %}" class="btn btn-sm btn-outline-danger btn-icon"><i class="bi bi-trash"></i></a>{% endif %}</div></td>
+</tr>{% endfor %}
+</tbody></table>
+{% else %}<div class="empty-state"><div class="empty-icon"><i class="bi bi-diagram-3"></i></div><h5>No Sections Found</h5><a href="{% url 'departments:section_create' %}" class="btn btn-primary btn-sm">Add Section</a></div>{% endif %}
+</div>{% endblock %}

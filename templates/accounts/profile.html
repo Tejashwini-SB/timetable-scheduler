@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}Profile{% endblock %}
+{% block page_header %}<div class="page-header"><div><h1 class="page-title"><i class="bi bi-person-circle me-2 text-primary"></i>My Profile</h1></div></div>{% endblock %}
+{% block content %}
+<div class="row g-3 justify-content-center">
+<div class="col-lg-7">
+<div class="card mb-3">
+<div class="card-header"><h6 class="mb-0 fw-700">Update Profile</h6></div>
+<div class="card-body">
+<form method="post" enctype="multipart/form-data" novalidate>{% csrf_token %}
+{% for field in form %}<div class="mb-3"><label class="form-label">{{ field.label }}</label>{{ field }}{% if field.errors %}<div class="invalid-feedback d-block">{{ field.errors.0 }}</div>{% endif %}</div>{% endfor %}
+<button type="submit" class="btn btn-primary">Save Changes</button>
+</form>
+</div>
+</div>
+<div class="card">
+<div class="card-body text-center">
+<h6 class="fw-700">Account Info</h6>
+<dl class="text-start" style="font-size:0.85rem;">
+<dt>Username</dt><dd>{{ request.user.username }}</dd>
+<dt>Role</dt><dd>{{ request.user.get_role_display }}</dd>
+<dt>Joined</dt><dd>{{ request.user.date_joined|date:"M d, Y" }}</dd>
+</dl>
+<a href="{% url 'accounts:change_password' %}" class="btn btn-outline-warning btn-sm"><i class="bi bi-key me-1"></i>Change Password</a>
+</div>
+</div>
+</div>
+</div>
+{% endblock %}
