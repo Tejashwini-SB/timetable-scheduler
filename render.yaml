@@ -2,6 +2,7 @@ services:
   - type: web
     name: timetable-scheduler
     env: python
+    plan: free
     buildCommand: "./build.sh"
     startCommand: "gunicorn timetable_scheduler.wsgi:application"
     envVars:
@@ -18,5 +19,6 @@ services:
 
 databases:
   - name: timetable-db
+    plan: free
     databaseName: timetable_db
     user: timetable_user
