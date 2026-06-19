@@ -185,17 +185,43 @@ Before running auto-schedule:
 
 ## 🚢 Production Deployment
 
-```bash
-# Set environment variables
-DEBUG=False
-ALLOWED_HOSTS=yourdomain.com
+### Option 1: Deploying on Render (Recommended)
 
-# Collect static files
-python manage.py collectstatic
+This project is pre-configured for deployment on Render using the provided `render.yaml` blueprint:
 
-# Run with Gunicorn
-gunicorn timetable_scheduler.wsgi:application --bind 0.0.0.0:8000 --workers 3
-```
+1. Sign up/log in to [Render](https://render.com/).
+2. Click **New +** -> **Blueprint**.
+3. Connect your GitHub repository.
+4. Enter a **Blueprint Name** and click **Deploy Blueprint**.
+
+Render will automatically configure the PostgreSQL database and python web service using the Free plan.
+
+### Option 2: Manual VPS Deployment
+
+If deploying manually on a VPS (like Ubuntu/Debian):
+
+1. **Set Environment Variables:**
+   ```bash
+   export SECRET_KEY='your-production-secret-key'
+   export DEBUG=False
+   export ALLOWED_HOSTS='yourdomain.com'
+   export DB_NAME='timetable_db'
+   export DB_USER='timetable_user'
+   export DB_PASSWORD='your_db_password'
+   export DB_HOST='localhost'
+   export DB_PORT='5432'
+   ```
+
+2. **Run Migrations & Collect Static:**
+   ```bash
+   python manage.py migrate
+   python manage.py collectstatic --no-input
+   ```
+
+3. **Start the WSGI Server:**
+   ```bash
+   gunicorn timetable_scheduler.wsgi:application --bind 0.0.0.0:8000 --workers 3
+   ```
 
 ---
 
