@@ -13,22 +13,7 @@
         <h1 class="text-center mb-1" style="font-size:1.5rem;font-weight:800;color:#1a237e;">EduScheduler</h1>
         <p class="text-center text-muted mb-4" style="font-size:0.85rem;">Automated Class Timetable Scheduler</p>
 
-        <!-- Demo Credentials Banner -->
-        <div class="mb-4 p-3 rounded-3" style="background:#e8eaf6;border-left:4px solid #3949ab;">
-            <p class="mb-1" style="font-size:0.78rem;font-weight:700;color:#1a237e;letter-spacing:0.5px;text-transform:uppercase;">
-                <i class="bi bi-info-circle me-1"></i>Demo Credentials
-            </p>
-            <div style="font-size:0.8rem;color:#3949ab;">
-                <div class="d-flex justify-content-between">
-                    <span><strong>Admin:</strong> admin</span>
-                    <span class="badge" style="background:#1a237e;color:white;font-family:monospace;">admin123</span>
-                </div>
-                <div class="d-flex justify-content-between mt-1">
-                    <span><strong>Faculty:</strong> dr.sharma</span>
-                    <span class="badge" style="background:#1a237e;color:white;font-family:monospace;">faculty123</span>
-                </div>
-            </div>
-        </div>
+
 
         <!-- Login Form -->
         <form method="post" novalidate>
@@ -44,7 +29,9 @@
                 <label for="id_password" class="form-label">Password</label>
                 <div class="position-relative">
                     {{ form.password }}
-                    <button type="button" class="btn btn-link position-absolute top-50 end-0 translate-middle-y pe-3 text-muted" style="background:none;border:none;" id="togglePassword">
+                    <button type="button"
+                        class="btn btn-link position-absolute top-50 end-0 translate-middle-y pe-3 text-muted"
+                        style="background:none;border:none;" id="togglePassword">
                         <i class="bi bi-eye" id="eyeIcon"></i>
                     </button>
                 </div>
@@ -79,16 +66,16 @@
 </div>
 
 <script>
-document.getElementById('togglePassword').addEventListener('click', function () {
-    const pw = document.getElementById('id_password');
-    const icon = document.getElementById('eyeIcon');
-    if (pw.type === 'password') {
-        pw.type = 'text';
-        icon.className = 'bi bi-eye-slash';
-    } else {
-        pw.type = 'password';
-        icon.className = 'bi bi-eye';
-    }
-});
+    document.getElementById('togglePassword').addEventListener('click', function () {
+        const pw = document.getElementById('id_password');
+        const icon = document.getElementById('eyeIcon');
+        if (pw.type === 'password') {
+            pw.type = 'text';
+            icon.className = 'bi bi-eye-slash';
+        } else {
+            pw.type = 'password';
+            icon.className = 'bi bi-eye';
+        }
+    });
 </script>
 {% endblock %}
